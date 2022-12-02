@@ -642,6 +642,54 @@ echo Middle::getSalary(); // 3000
 **[⬆ вернуться к началу](#содержание)**
 
 ### Что такое Service Layer и где его следует применять?
+Паттерн Сервисный слой (Service Layer) определяет для приложения границу и набор допустимых операций с точки зрения взаимодействующих с ним клиентских. 
+Он инкапсулирует бизнес-логику приложения, управляя транзакциями и управляя ответами в реализации этих операций.
+
+Другими словами вы пишете логику приложения в классах-сервисах, а в своих контроллерах обращаетесь к ним.
+
+Сервисный слой может быть применен для того чтобы убрать бизнес-логику из контроллера, освободив контроллер от лишних обязанностей,
+соблюдая принцип единственной ответственности. Или если есть потребность скомпоновать некую часть логики, 
+которая будет использоваться в разных контроллерах. 
+Например, логику отправки уведомлений удобнее инкапсулировать в сервис NotificationService и использовать его где необходимо.
+
+Сервисный слой можно использовать в качестве концентратора запросов, если он стоит поверх паттерна Repository и использует паттерн Query object. 
+Дело в том, что паттерн Repository ограничивает свой интерфейс посредством интерфейса Query Object. 
+А так как класс не должен делать предположений о своих клиентах, то накапливать предустановленные запросы в классе 
+Repository нельзя, ибо он не может владеть потребностями всех клиентов. Клиенты должны сами заботиться о себе. 
+А сервисный слой как раз и создан для обслуживания клиентов.
+
+
+```php
+namespace App\Http\Controllers;
+
+use App\Http\Requests\CreateOrderRequest;
+use App\Services\NotificationService;
+use App\Services\OrderService;
+
+class OrderController
+{
+    private NotificationService $notificationService;
+    private OrderService $orderService;
+    
+    public function __construct(OrderService $orderService, NotificationService $notificationService)
+    {
+        $this->orderService = $orderService;
+        $this->notificationService = $notificationService;
+    }
+
+    public function createOrder(CreateOrderRequest $request)
+    {
+        // Логика создания заказа...
+        
+        $this->notificationService->notify('order_created', [
+            'order' => $order
+        ]);
+    }
+}
+
+```
+
+
 **[⬆ вернуться к началу](#содержание)**
 
 ### Что такое идемпотентность?
