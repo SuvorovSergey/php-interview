@@ -637,6 +637,7 @@ echo Middle::getSalary(); // 3000
 Замыкание (closure) в PHP - это анонимная функция, которая может быть сохранена в переменной и передана как аргумент другой функции. Она может иметь доступ к переменным внешней функции, даже после того, как эта функция завершила свою работу.
 
 https://www.php.net/manual/ru/functions.anonymous.php
+https://www.php.net/manual/ru/class.closure.php
 
 ```php
 
